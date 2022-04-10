@@ -21,7 +21,9 @@ pip3 install traceback
 pip3 install requests
 pip3 install platform
 pip3 install selenium
-
+pip3 install bs4
+pip3 install lxml
+pip3 install twstock
 # 編譯
 1. 使用 IDE 編譯
 2. python tw_stock_tool.py
