@@ -11,6 +11,9 @@ from tkinter import ttk
 class Stock_View:
     def __init__(self,window):
         self.window = window
+    def tw_stock_view_init_ui(self):
+        # sub View
+        self.tw_stock_options_view = Stock_Options_View(self.window)
         #----------------------------- 
         #           create all View UI
         #-----------------------------
@@ -31,13 +34,14 @@ class Stock_View:
         self.tw_stock_view_date_entry(120,260,50,260,165,230)
         self.tw_stock_view_TPEx_TWSE_check_button(50,280)
         self.tw_stock_view_rank_entry(240,260,180,260)
+
     def tw_stock_view_label(self,*args):
         tk.Label(self.window,text="股票代號:").place(x=args[0],y=args[1])
     def tw_stock_view_entry(self,*args):
         self.var = tk.StringVar()
         tk.Entry(self.window,textvariable=self.var).place(x=args[0],y=args[1])#.pack(side='top',ipadx=10)
     def tw_stock_view_button_stock_list(self,*args):
-    	tk.Button(self.window,text=args[0]).place(x=args[1],y=args[2],height=20)#command=self.tw_stock_tool_setting_window 
+    	tk.Button(self.window,text=args[0],command=self.tw_stock_options_view.tw_stock_options_view_setting_window).place(x=args[1],y=args[2],height=20)#command=self.tw_stock_tool_setting_window 
     def tw_stock_view_check_button(self,*args):
         self.check_var1 = tk.BooleanVar()
         self.check_var2 = tk.BooleanVar()
@@ -138,3 +142,50 @@ class Stock_View:
         self.rank = tk.StringVar()
         tk.Entry(self.window,width=5,textvariable=self.rank).place(x=args[0],y=args[1])
         tk.Label(self.window,text='買賣超前:').place(x=args[2],y=args[3])
+    #----------------------------------------------------------------------
+    #                      View executes functions from Conrtoller to Model
+    #----------------------------------------------------------------------
+    def tw_stock_view_set_to_controller(self,controller):
+        self.controller = controller
+class Stock_Options_View(Stock_View):
+    def __init__(self,window):
+        super().__init__(window)
+    def tw_stock_options_view_setting_window(self):
+        self.window.attributes("-disabled",1)
+        stock_list_window = tk.Toplevel(self.window)
+        stock_list_window.title("Options")
+        stock_list_window.geometry("280x250")
+    	### variable ###
+        entry_stock_id = tk.StringVar()
+    	### stock id list window object ###
+        self.setting_entry = tk.Entry(stock_list_window,textvariable=entry_stock_id,width=30)
+        self.stock_id_list_box = tk.Listbox(stock_list_window,height=10,width=30,selectmode=tk.EXTENDED)
+        tk.Button(stock_list_window,text="join",height=1,command=lambda:self.tw_stock_options_view_insert_stock_id_to_list(entry_stock_id)).place(x=230,y=10)
+        tk.Button(stock_list_window,text="enter",height=1,command=lambda:self.tw_stock_options_view_setting_button_check(stock_list_window)).place(x=180,y=220,width=40)
+        tk.Button(stock_list_window,text="cancel",height=1,command=lambda:self.tw_stock_options_view_on_close_stock_list(stock_list_window)).place(x=230,y=220,width=40)
+        tk.Button(stock_list_window,text="delete",height=1,command=self.tw_stock_options_view_tool_setting_button_delete).place(x=230,y=40,width=40)
+        stock_list_window.focus()
+        self.stock_id_list_box.place(x=10,y=40)
+        self.setting_entry.place(x=10,y=10,height=25)
+        self._load_stock_id_setting()
+        stock_list_window.protocol("WM_DELETE_WINDOW",lambda:self._on_close_stock_list(stock_list_window))
+    def tw_stock_options_view_insert_stock_id_to_list(self,entry_stock_id):
+    	self.stock_id_list_box.insert(tk.END,entry_stock_id.get())
+    	#self.tw_stock_setting.Setting_config_set(self.tw_stock_setting.section_name,entry_stock_id.get(),entry_stock_id.get())
+    	self.setting_entry.delete(0,'end')
+    def tw_stock_options_view_setting_button_check(self,stock_list_window):
+    	index = self.stock_id_list_box.curselection()
+    	stock_id = self.stock_id_list_box.get(index)
+    	self.var.set(stock_id)
+    	self.tw_stock_options_view_on_close_stock_list(stock_list_window)
+    def tw_stock_options_view_on_close_stock_list(self,stock_list_window):
+    	self.window.attributes("-disabled",0)
+    	stock_list_window.destroy()
+    def tw_stock_options_view_tool_setting_button_delete(self):
+    	index = self.stock_id_list_box.curselection()
+    	#items = self.tw_stock_setting.Setting_load_all_items(self.tw_stock_setting.section_name)
+    	stock_id = self.stock_id_list_box.get(index)
+    	self.stock_id_list_box.destock_id_list_boxlete(index)
+    	#self.tw_stock_setting.Setting_config_del(self.tw_stock_setting.section_name,stock_id)
+    
+        

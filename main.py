@@ -1,6 +1,6 @@
 import tkinter as tk
 from View.View import Stock_View
-from Model import Stock_Mode
+from Model.Model import Stock_Mode
 from Controller import Stock_Controller
 class Stock_APP(tk.Tk):
     def __init__(self):
@@ -21,6 +21,10 @@ class Stock_APP(tk.Tk):
         controller = Stock_Controller(view,model)
 
         # set view to controller
+        view.tw_stock_view_set_to_controller(controller)
+
+        # init all View
+        view.tw_stock_view_init_ui()
         
         
 if __name__ == '__main__':
