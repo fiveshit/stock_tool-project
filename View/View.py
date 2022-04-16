@@ -1,5 +1,9 @@
 import tkinter as tk
 from tkinter import ttk
+from Controller.error_msg import *
+import tkinter as tk
+
+
 #---------------------------------------#
 #Name : Stock_View
 #Description : Tkinter module create UI
@@ -8,10 +12,13 @@ from tkinter import ttk
 #Return : -
 #description : When user press UI,view will send event to controller.
 #---------------------------------------#
-class Stock_View:
-    def __init__(self,window):
-        self.window = window
+class Stock_View(tk.Tk):
+    def __init__(self):
+        super().__init__()
+        self.window = self
     def tw_stock_view_init_ui(self):
+        self.window.title('stock app')
+        self.window.geometry('820x650')
         # sub View
         self.tw_stock_options_view = Stock_Options_View(self.window)
         #----------------------------- 
@@ -149,7 +156,7 @@ class Stock_View:
         self.controller = controller
 class Stock_Options_View(Stock_View):
     def __init__(self,window):
-        super().__init__(window)
+        self.window = window
     def tw_stock_options_view_setting_window(self):
         self.window.attributes("-disabled",1)
         stock_list_window = tk.Toplevel(self.window)
@@ -168,11 +175,15 @@ class Stock_Options_View(Stock_View):
         self.stock_id_list_box.place(x=10,y=40)
         self.setting_entry.place(x=10,y=10,height=25)
         self._load_stock_id_setting()
-        stock_list_window.protocol("WM_DELETE_WINDOW",lambda:self._on_close_stock_list(stock_list_window))
+        stock_list_window.protocol("WM_DELETE_WINDOW",lambda:self.tw_stock_options_view_on_close_stock_list(stock_list_window))
+    def _load_stock_id_setting(self):
+    	stock_id = self.controller.tw_stock_controller_setting(Setting_item.LOAD_ALL_ITEMS)#self.tw_stock_setting.Setting_load_all_items(self.tw_stock_setting.section_name)
+    	for id in range(len(stock_id)):
+    		self.stock_id_list_box.insert(tk.END,stock_id[id][0])
     def tw_stock_options_view_insert_stock_id_to_list(self,entry_stock_id):
-    	self.stock_id_list_box.insert(tk.END,entry_stock_id.get())
-    	#self.tw_stock_setting.Setting_config_set(self.tw_stock_setting.section_name,entry_stock_id.get(),entry_stock_id.get())
-    	self.setting_entry.delete(0,'end')
+        self.stock_id_list_box.insert(tk.END,entry_stock_id.get())
+        self.controller.tw_stock_controller_setting(Setting_item.CONFIG_SET,entry_stock_id.get(),entry_stock_id.get())#self.tw_stock_setting.Setting_config_set(self.tw_stock_setting.section_name,entry_stock_id.get(),entry_stock_id.get())
+        self.setting_entry.delete(0,'end')
     def tw_stock_options_view_setting_button_check(self,stock_list_window):
     	index = self.stock_id_list_box.curselection()
     	stock_id = self.stock_id_list_box.get(index)
@@ -183,9 +194,9 @@ class Stock_Options_View(Stock_View):
     	stock_list_window.destroy()
     def tw_stock_options_view_tool_setting_button_delete(self):
     	index = self.stock_id_list_box.curselection()
-    	#items = self.tw_stock_setting.Setting_load_all_items(self.tw_stock_setting.section_name)
+    	self.controller.tw_stock_controller_setting(Setting_item.LOAD_ALL_ITEMS)#items = self.tw_stock_setting.Setting_load_all_items(self.tw_stock_setting.section_name)
     	stock_id = self.stock_id_list_box.get(index)
     	self.stock_id_list_box.destock_id_list_boxlete(index)
-    	#self.tw_stock_setting.Setting_config_del(self.tw_stock_setting.section_name,stock_id)
+    	self.controller.tw_stock_controller_setting(Setting_item.CONFIG_DEL,stock_id)#self.tw_stock_setting.Setting_config_del(self.tw_stock_setting.section_name,stock_id)
     
         

@@ -1,32 +1,9 @@
-import tkinter as tk
-from View.View import Stock_View
-from Model.Model import Stock_Mode
-from Controller import Stock_Controller
-class Stock_APP(tk.Tk):
+
+from Controller.Controller import Stock_Controller
+class Stock_APP():
     def __init__(self):
-        super().__init__()
-
-        self.title('stock app')
-        self.geometry('820x650')
-
-
-        
-        # create a View 
-        view = Stock_View(self)
-
-        # creat a Model 
-        model = Stock_Mode()
-
-        # create a cotroller
-        controller = Stock_Controller(view,model)
-
-        # set view to controller
-        view.tw_stock_view_set_to_controller(controller)
-
-        # init all View
-        view.tw_stock_view_init_ui()
-        
+        self.controller = Stock_Controller() 
         
 if __name__ == '__main__':
     app = Stock_APP()
-    app.mainloop()
+    app.controller.run()

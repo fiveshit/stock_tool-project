@@ -1,7 +1,14 @@
 import sys
 from traceback import extract_tb
 from enum import Enum
-
+class Setting_item(Enum):
+    LOAD_SECTION = 0
+    LOAD_ALL_ITEMS = 1
+    CONFIG_READ = 2
+    CONFIG_WRITE = 3
+    CONFIG_SET = 4
+    CONFIG_GET = 5
+    CONFIG_DEL = 6
 class Flags(Enum):
     REALTIME_LOOP = 0
     INIT_FIG = 1

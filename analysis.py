@@ -2,8 +2,8 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
-from error_msg import sys_debug_info
-from error_msg import Flags
+from Controller.error_msg import sys_debug_info
+from Controller.error_msg import Flags
 
 
 class analysis():

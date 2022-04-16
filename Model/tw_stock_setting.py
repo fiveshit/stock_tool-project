@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import os
 import configparser
-import error_msg
+import Controller.error_msg
 #---------------------------------------#
 #Name : Setting
 #Description : create/read/write ini file
@@ -14,7 +14,9 @@ class Setting():
     def __init__(self):
         #init setting.ini
         current_path = os.path.dirname(os.path.realpath(__file__))
+        print(current_path)
         self.config_path = os.path.join(current_path,'setting.ini')
+        print(self.config_path)
         self.config = configparser.ConfigParser()
         self.section_name = "stock_id"
         #init section

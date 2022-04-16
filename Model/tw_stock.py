@@ -4,7 +4,7 @@ from twstock import BestFourPoint
 import tkinter.ttk as ttk
 import tkinter as tk
 import time
-import analysis
+import Model.analysis
 import pandas as pd
 import threading
 
