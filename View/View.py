@@ -59,7 +59,8 @@ class Stock_View(tk.Tk):
     def tw_stock_view_button(self,*args):
         bt = tk.Button(self.window,text="show picture",width=15).place(x=args[0],y=args[1])#.pack(side='left')#command=self.tw_stock_tool_check_get
     def tw_stock_view_tdcc_search(self,*args):
-        bt = tk.Button(self.window,text="TDCC結算",width=11).place(x=args[0],y=args[1])#,command=lambda:\
+        bt = tk.Button(self.window,text="TDCC結算",width=11,command=lambda:\
+                         self.controller.tw_stock_controller_tdcc(self.var.get(),self.check_var1.get(),self.check_var2.get())).place(x=args[0],y=args[1])#,command=lambda:\
                        #TDCC_load_stock_data(self.var.get(),self.check_var1.get(),self.check_var2.get())).place(x=args[0],y=args[1])
     def tw_stock_view_realtime_button(self,*args):
         self.realtim_text = tk.StringVar()
@@ -154,6 +155,14 @@ class Stock_View(tk.Tk):
     #----------------------------------------------------------------------
     def tw_stock_view_set_to_controller(self,controller):
         self.controller = controller
+#---------------------------------------#
+#Name : Stock_Options_View
+#Description : Tkinter module Options UI
+#Input : tkinter.Tk(),window
+#Output : -
+#Return : -
+#description : When user press options UII,view will send event to controller.
+#---------------------------------------#
 class Stock_Options_View(Stock_View):
     def __init__(self,window):
         self.window = window

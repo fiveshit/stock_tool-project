@@ -2,7 +2,7 @@ from error_msg import Setting_item
 from View.View import Stock_View
 from Model.Model import Stock_Mode
 from Model.tw_stock_setting import Setting
-
+import tw_stock_tdcc
 
 class Stock_Controller:
     def __init__(self):
@@ -13,6 +13,7 @@ class Stock_Controller:
         self.view.tw_stock_view_init_ui()
     def run(self):
         self.view.window.mainloop()
+#----- Setting function enum-------#
 #    LOAD_SECTION = 0
 #    LOAD_ALL_ITEMS = 1
 #    CONFIG_READ = 2
@@ -20,6 +21,7 @@ class Stock_Controller:
 #    CONFIG_SET = 4
 #    CONFIG_GET = 5
 #    CONFIG_DEL = 6
+#------------------------------#
     def tw_stock_controller_setting(self,item,*args):
         if item == LOAD_SECTION:
             print("do load section")
@@ -36,6 +38,8 @@ class Stock_Controller:
         elif item == CONFIG_DEL:
             self.setting.Setting_config_del(self.setting.section_name,args[0])
             print("do config delete")
+    def tw_stock_controller_tdcc(self,*args):
+        tw_stock_tdcc.TDCC_load_stock_data(args[0],args[1],args[2])
         
         
 

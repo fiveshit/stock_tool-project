@@ -1,7 +1,8 @@
 
 from Controller.Controller import Stock_Controller
 class Stock_APP():
-    def __init__(self):
+    def __init__(self):
+
         self.controller = Stock_Controller() 
         
 if __name__ == '__main__':
