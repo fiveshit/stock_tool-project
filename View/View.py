@@ -48,7 +48,8 @@ class Stock_View(tk.Tk):
         self.var = tk.StringVar()
         tk.Entry(self.window,textvariable=self.var).place(x=args[0],y=args[1])#.pack(side='top',ipadx=10)
     def tw_stock_view_button_stock_list(self,*args):
-    	tk.Button(self.window,text=args[0],command=self.tw_stock_options_view.tw_stock_options_view_setting_window).place(x=args[1],y=args[2],height=20)
+        tk.Button(self.window,text=args[0],command=self.tw_stock_options_view.tw_stock_options_view_setting_window).place(x=args[1],y=args[2],height=20)
+    def tw_stock_view_check_button(self,*args):
         self.check_var1 = tk.BooleanVar()
         self.check_var2 = tk.BooleanVar()
         self.check_var3 = tk.BooleanVar()
