@@ -8,6 +8,7 @@ import analysis
 import pandas as pd
 import threading
 
+
 BEST_BUY = {'是否量大收紅':0,'是否量縮價不跌':0,'三日均價由下往上':0,'三日均價大於六日均價':0}
 BEST_SELL = {'量大收黑':0,'量縮價跌':0,'三日均價由上往下':0,'三日均價小於六日均價':0}
 

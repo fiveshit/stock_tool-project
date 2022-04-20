@@ -4,6 +4,7 @@ from Model.Model import Stock_Mode
 from Model.tw_stock_setting import Setting
 from Model.tw_stock import tw_stock_analytics
 from Model.tw_stock_load import load_stock_tables
+from Model.tw_stock import BEST_BUY,BEST_SELL
 
 import tw_stock_tdcc
 import twstock
@@ -47,6 +48,12 @@ class Stock_Controller:
             realtime_text.set("running")
         if not self.event.is_set():
             self.event.set()
+    def tw_stock_controller_stop(self,event):
+        if self.flag_items[Flags.TEXT_STUCK.value] == False:
+            self.flag_items[Flags.TEXT_STUCK.value] = True
+    def tw_stock_controller_start(self,event):
+        if self.flag_items[Flags.TEXT_STUCK.value] == True:
+            self.flag_items[Flags.TEXT_STUCK.value] = False
 #----- Setting function enum-------#
 #    LOAD_SECTION = 0
 #    LOAD_ALL_ITEMS = 1
@@ -72,11 +79,27 @@ class Stock_Controller:
         elif item == Setting_item.CONFIG_DEL:
             self.setting.Setting_config_del(self.setting.section_name,args[0])
             print("do config delete")
+    #---------load functions -----------#
     def tw_stock_load_data(self,path):
         load_stock_tables(path)
-    def tw_stock_controller_tdcc(self,*args):
-        tw_stock_tdcc.TDCC_load_stock_data(args[0],args[1],args[2])
-        #----- Setting function enum-------#
+        # -------TDCC functions-----------#
+        #   TDCC_LOAD_DATE = 0
+        #   TDCC_LOAD_DATA = 1
+        #   TPEX_LOAD_INFO = 2
+        #   TWSE_LOAD_INFO = 3
+        #-------------------------------#
+    def tw_stock_controller_tdcc(self,item,*args,period='D'):
+        if item == TDCC_item.TDCC_LOAD_DATE:
+            print("do TDCCC load date")
+        elif item == TDCC_item.TDCC_LOAD_DATA:
+            tw_stock_tdcc.TDCC_load_stock_data(args[0],args[1],args[2])
+        elif item == TDCC_item.TPEX_LOAD_INFO:
+            return tw_stock_tdcc.TPEx_load_stock_info(args[0],period)
+        elif item == TDCC_item.TWSE_LOAD_INFO:
+            return tw_stock_tdcc.TWSE_load_stock_info(args[0])
+    def tw_stock_controller_param_TPEx(self):
+        return tw_stock_tdcc.TPEx
+        #----- stock  function enum-------#
         #   STOCK_LOAD_NUMBER = 0
         #   STOCK_LOAD_SHOW_DATA = 1
         #   STOCK_LOAD_HISTORY_DATA = 2
@@ -108,6 +131,13 @@ class Stock_Controller:
             stock_id = twstock.Stock(stock_id_get)
             merge_best_but_sell = self.stock.load_stock_BestFourPoint(stock_id)
             return merge_best_but_sell
+    def tw_stock_controller_BEST_BUY(self):
+        return BEST_BUY
+    def tw_stock_controller_BEST_SELL(self):
+        return BEST_SELL
+       #-------- Model functions---------#
+    def tw_stock_controller_model(self,tmp):
+        return self.model.stock_mode_pd_to_datetime(tmp)
 
         
         

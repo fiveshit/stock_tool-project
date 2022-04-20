@@ -6,7 +6,8 @@ import tkinter as tk
 from tkinter import filedialog
 import matplotlib.pyplot as plt
 from Controller.error_msg import sys_debug_info
-from Model.tw_stock import BEST_BUY,BEST_SELL
+from datetime import datetime
+
 #---------------------------------------#
 #Name : Stock_View
 #Description : Tkinter module create UI
@@ -71,7 +72,7 @@ class Stock_View(tk.Tk):
             tk.messagebox.showinfo('FYI','please selection checkbutton')
     def tw_stock_view_tdcc_search(self,*args):
         bt = tk.Button(self.window,text="TDCC結算",width=11,command=lambda:\
-                         self.controller.tw_stock_controller_tdcc(self.var.get(),self.check_var1.get(),self.check_var2.get())).place(x=args[0],y=args[1])#,command=lambda:\
+                         self.controller.tw_stock_controller_tdcc(TDCC_item.TDCC_LOAD_DATA,self.var.get(),self.check_var1.get(),self.check_var2.get())).place(x=args[0],y=args[1])
                        
     def tw_stock_view_realtime_button(self,*args):
         realtim_text = tk.StringVar()
@@ -97,13 +98,13 @@ class Stock_View(tk.Tk):
     def tw_stock_view_bestfourpoint(self,*args):
         bt = tk.Button(self.window,text="best four buy",command=lambda:self.tw_stock_view_treeview(self.var.get())).place(x=args[0],y=args[1])#.pack(side='left') #command=lambda:self.tw_stock_tool_treeview(self.var.get())
     def tw_stock_view_treeview(self,stock_sid):
-        #stock = self.tw_stock_analytics.load_stock_number(str(stock_sid))
+        
         stock = self.controller.tw_stock_controller_stock(Stock_item.STOCK_LOAD_NUMBER,str(stock_sid))
         if stock == False:
             return
         merge_best_but_sell = self.controller.tw_stock_controller_stock(Stock_item.STOCK_LOAD_BEST_FOURPOINT,stock,self.var.get())
         
-        #self.tw_stock_view_bestfourpoint_get(stock)
+        
         self.tree.insert('',0,text=stock.sid,values=merge_best_but_sell.values())
     def tw_stock_view_range_entry(self,*args):
         self.first_num = tk.StringVar()
@@ -122,10 +123,89 @@ class Stock_View(tk.Tk):
         self.text_nb.add(self.Tab1,text='All information')
         self.text_nb.add(self.Tab2,text="櫃買中心")
         self.text_nb.add(self.Tab3,text="外資買賣")
-        #self.text_nb.bind('<<NotebookTabChanged>>',self.tw_stock_tool_nb_item_index)
+        self.text_nb.bind('<<NotebookTabChanged>>',self.tw_stock_view_nb_item_index)
         self.text_nb.place(x=args[0],y=args[1])
+    def tw_stock_view_nb_item_index(self,event):
+        index = self.text_nb.index(self.text_nb.select())
+        if index == 0:
+            scrollbar = ttk.Scrollbar(self.Tab,command=self.Tab.yview)
+            scrollbar.grid(row=0, column=0,ipady=125,padx=480,sticky="nsew")
+            scrollbar.bind("<Button-1>",self.controller.tw_stock_controller_stop)
+            scrollbar.bind("<ButtonRelease-1>",self.controller.tw_stock_controller_start)
+            self.Tab['yscrollcommand'] = scrollbar.set
+        elif index == 1:
+            scrollbar1 = ttk.Scrollbar(self.Tab1,command=self.Tab1.yview)
+            scrollbar1.grid(row=0, column=0,ipady=125,padx=480,sticky="nsew")
+            scrollbar1.bind("<Button-1>",self.controller.tw_stock_controller_stop)
+            scrollbar1.bind("<ButtonRelease-1>",self.controller.tw_stock_controller_start)
+            self.Tab1['yscrollcommand'] = scrollbar1.set
+        elif index == 2:
+            scrollbar2 = ttk.Scrollbar(self.Tab2,command=self.Tab2.yview)
+            scrollbar2.grid(row=0, column=0,ipady=125,padx=480,sticky="nsew")
+            self.Tab2['yscrollcommand'] = scrollbar2.set
+        elif index == 3:
+            scrollbar3 = ttk.Scrollbar(self.Tab3,command=self.Tab3.yview)
+            scrollbar3.grid(row=0, column=0,ipady=125,padx=480,sticky="nsew")
+            self.Tab3['yscrollcommand'] = scrollbar3.set
     def tw_stock_view_get_buy_sell_info(self,*args):
-        bt = tk.Button(self.window,text='TPEx/TWSE',width=15).place(x=args[0],y=args[1])#command=self.tw_stock_tool_TPEx_TWSE_info
+        bt = tk.Button(self.window,text='TPEx/TWSE',width=15,command=self.tw_stock_view_TPEx_TWSE_info).place(x=args[0],y=args[1])
+    def tw_stock_view_TPEx_TWSE_info(self):
+        self.tw_stock_view_TPEx_info()
+        self.tw_stock_view_TWSE_info()
+    def tw_stock_view_TPEx_info(self):
+        if self.Day_check.get() == True:
+            table = self.controller.tw_stock_controller_tdcc(TDCC_item.TPEX_LOAD_INFO,self.TPEx_TWSE.get(),period='D')
+        elif self.Week_check.get() == True:
+            table = self.controller.tw_stock_controller_tdcc(TDCC_item.TPEX_LOAD_INFO,self.TPEx_TWSE.get(),period='W')
+        elif self.Month_check.get() == True:
+            table = self.controller.tw_stock_controller_tdcc(TDCC_item.TPEX_LOAD_INFO,self.TPEx_TWSE.get(),period='M')
+        index = self.TPEx_TWSE_listbox.curselection()
+        table[self.TPEx_TWSE_listbox.get(index)] = table[self.TPEx_TWSE_listbox.get(index)].astype(float)
+        table.sort_values(by=[self.TPEx_TWSE_listbox.get(index)],ascending=False,inplace=True)
+        try:
+            for x,y in zip(table[self.TPEx_TWSE_listbox.get(index)],range(int(self.rank.get()))):
+                self.Tab2.insert(tk.END,"股號:{:5},名稱:{:5},買超:{:5}".format(table['代號代號'].iat[y]\
+                                                 ,table['名稱名稱'].iat[y],round(x/1000)) + '\n')
+            self.Tab2.insert(tk.END,'-------------------------------------'+'\n')
+            for x,y in zip(table[self.TPEx_TWSE_listbox.get(index)].iloc[::-1],range(1,int(self.rank.get())+1)):
+                self.Tab2.insert(tk.END,"股號:{:5},名稱:{:5},賣超:{:5}".format(table['代號代號'].iat[-y]\
+                                                 ,table['名稱名稱'].iat[-y],round(x/1000)) + '\n')
+                self.Tab2.see(tk.END)
+            self.Tab2.insert(tk.END,'-------------------------------------'+'\n')
+            if self.var.get() != "":
+                self.Tab1.insert(tk.END,(table.loc[table['代號代號'] == self.var.get()]))
+                self.Tab1.see(tk.END)
+                self.Tab1.insert(tk.END,'-------------------------------------'+'\n')
+                self.Tab2.insert(tk.END,(table.loc[table['代號代號'] == self.var.get()])[self.TPEx_TWSE_listbox.get(index)] )
+        except:
+            pass
+    def tw_stock_view_TWSE_info(self):
+        if self.TPEx_TWSE.get().startswith("1"):
+            tmp = self.TPEx_TWSE.get().replace(self.TPEx_TWSE.get()[0:3],str(int(self.TPEx_TWSE.get()[0:3])+1911))
+            date_tmp = self.controller.tw_stock_controller_model(tmp)
+            date = datetime.date(date_tmp).strftime("%Y%m%d")
+        table = self.controller.tw_stock_controller_tdcc(TDCC_item.TWSE_LOAD_INFO,date)
+        index = self.TPEx_TWSE_listbox.curselection()
+        table[self.TPEx_TWSE_listbox.get(index)] = table[self.TPEx_TWSE_listbox.get(index)].astype(float)
+        table.sort_values(by=[self.TPEx_TWSE_listbox.get(index)],ascending=False,inplace=True) 
+        try:
+            for x,y in zip(table[self.TPEx_TWSE_listbox.get(index)],range(int(self.rank.get()))):
+                self.Tab3.insert(tk.END,"股號:{:5},名稱:{:5},買超:{:5}".format(table['證券代號'].iat[y]\
+                                                 ,table['證券名稱'].iat[y],round(x/1000)) + '\n')
+            self.Tab3.insert(tk.END,'-------------------------------------'+'\n')
+            for x,y in zip(table[self.TPEx_TWSE_listbox.get(index)].iloc[::-1],range(1,int(self.rank.get())+1)):
+                self.Tab3.insert(tk.END,"股號:{:5},名稱:{:5},賣超:{:5}".format(table['證券代號'].iat[-y]\
+                                                 ,table['證券名稱'].iat[-y],round(x/1000)) + '\n')
+                self.Tab3.see(tk.END)
+            self.Tab3.insert(tk.END,'-------------------------------------'+'\n')
+            if self.var.get() != "":
+                self.Tab1.insert(tk.END,(table.loc[table['證券代號'] == self.var.get()]))
+                self.Tab1.see(tk.END)
+                self.Tab1.insert(tk.END,'-------------------------------------'+'\n')
+                self.Tab3.insert(tk.END,(table.loc[table['證券代號'] == self.var.get()])[self.TPEx_TWSE_listbox.get(index)] )
+
+        except:
+            pass
     def tw_stock_view_treeview_preview(self,*args):
         self.index = ['1','2','3','4','5','6','7','8']
         frame_treeview = tk.Frame(self.window)
@@ -134,11 +214,12 @@ class Stock_View(tk.Tk):
         hsb = ttk.Scrollbar(frame_treeview, orient="horizontal", command=self.tree.xview)
         self.tree["columns"] = self.index
         print(self.index[0])
-        
+        best_buy = self.controller.tw_stock_controller_BEST_BUY()
+        best_sell = self.controller.tw_stock_controller_BEST_SELL()
         for x in range(0,4):
-            self.tree.heading(self.index[x],text=list(BEST_BUY.keys())[x])
+            self.tree.heading(self.index[x],text=list(best_buy.keys())[x])
         for x in range(0,4):
-            self.tree.heading(self.index[x+4],text=list(BEST_SELL.keys())[x])
+            self.tree.heading(self.index[x+4],text=list(best_sell.keys())[x])
         
         self.tree.column("#0", width=0,stretch=True)
         #### setting index width ####
@@ -166,13 +247,14 @@ class Stock_View(tk.Tk):
         scrollbar = tk.Scrollbar(frame_lt)
         self.TPEx_TWSE_listbox = tk.Listbox(frame_lt,height=3,selectmode=tk.EXTENDED)
         scrollbar.pack(side=tk.RIGHT,fill=tk.Y)
-        """
+        
         self.TPEx_TWSE_listbox.pack(side=tk.LEFT,fill=tk.BOTH)
+        TPEx = self.controller.tw_stock_controller_param_TPEx()
         for i in range(len(TPEx)):
             self.TPEx_TWSE_listbox.insert(tk.END,TPEx[i])
         self.TPEx_TWSE_listbox.config(yscrollcommand=scrollbar.set)
         scrollbar.config(command=self.TPEx_TWSE_listbox.yview)
-        """
+        
         frame_lt.place(x=args[0],y=args[1])
     def tw_stock_view_rank_entry(self,*args):
         self.rank = tk.StringVar()

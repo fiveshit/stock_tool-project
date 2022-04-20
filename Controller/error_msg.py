@@ -1,6 +1,13 @@
 import sys
 from traceback import extract_tb
 from enum import Enum
+
+
+class TDCC_item(Enum):
+    TDCC_LOAD_DATE = 0
+    TDCC_LOAD_DATA = 1
+    TPEX_LOAD_INFO = 2
+    TWSE_LOAD_INFO = 3
 class Setting_item(Enum):
     LOAD_SECTION = 0
     LOAD_ALL_ITEMS = 1

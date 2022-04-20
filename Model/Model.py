@@ -1,9 +1,8 @@
-from tw_stock import tw_stock_analytics
-from tw_stock_load import load_stock_tables
-from tw_stock_setting import Setting
-from tw_stock_tdcc import *
+import pandas as pd
+
 class Stock_Mode:
     def __init__(self):
         print("enter Model")
-        self.setting = Setting()
+    def stock_mode_pd_to_datetime(self,tmp):
+        return pd.to_datetime(tmp,format='%Y/%m/%d')
     
