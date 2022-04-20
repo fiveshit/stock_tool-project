@@ -3,6 +3,8 @@ from View.View import Stock_View
 from Model.Model import Stock_Mode
 from Model.tw_stock_setting import Setting
 from Model.tw_stock import tw_stock_analytics
+from Model.tw_stock_load import load_stock_tables
+
 import tw_stock_tdcc
 import twstock
 
@@ -41,6 +43,8 @@ class Stock_Controller:
         elif item == Setting_item.CONFIG_DEL:
             self.setting.Setting_config_del(self.setting.section_name,args[0])
             print("do config delete")
+    def tw_stock_load_data(self,path):
+        load_stock_tables(path)
     def tw_stock_controller_tdcc(self,*args):
         tw_stock_tdcc.TDCC_load_stock_data(args[0],args[1],args[2])
         #----- Setting function enum-------#

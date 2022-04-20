@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from Controller.error_msg import *
 import tkinter as tk
+from tkinter import filedialog
 from Model.tw_stock import BEST_BUY,BEST_SELL
 #---------------------------------------#
 #Name : Stock_View
@@ -47,8 +48,7 @@ class Stock_View(tk.Tk):
         self.var = tk.StringVar()
         tk.Entry(self.window,textvariable=self.var).place(x=args[0],y=args[1])#.pack(side='top',ipadx=10)
     def tw_stock_view_button_stock_list(self,*args):
-    	tk.Button(self.window,text=args[0],command=self.tw_stock_options_view.tw_stock_options_view_setting_window).place(x=args[1],y=args[2],height=20)#command=self.tw_stock_tool_setting_window 
-    def tw_stock_view_check_button(self,*args):
+    	tk.Button(self.window,text=args[0],command=self.tw_stock_options_view.tw_stock_options_view_setting_window).place(x=args[1],y=args[2],height=20)
         self.check_var1 = tk.BooleanVar()
         self.check_var2 = tk.BooleanVar()
         self.check_var3 = tk.BooleanVar()
@@ -56,11 +56,11 @@ class Stock_View(tk.Tk):
         self.C2 = tk.Checkbutton(self.window,text="transaction",variable=self.check_var2,onvalue=1,offvalue=0).place(x=args[2],y=args[3])
         self.C3 = tk.Checkbutton(self.window,text="realtime bar",variable=self.check_var3,onvalue=1,offvalue=0).place(x=args[4],y=args[5])
     def tw_stock_view_button(self,*args):
-        bt = tk.Button(self.window,text="show picture",width=15,command=self.tw_stock_view_check_get).place(x=args[0],y=args[1])#.pack(side='left')#command=self.tw_stock_tool_check_get
+        bt = tk.Button(self.window,text="show picture",width=15,command=self.tw_stock_view_check_get).place(x=args[0],y=args[1])#.pack(side='left')
     def tw_stock_view_check_get(self):
         line,bar = self.check_var1.get(),self.check_var2.get()
         if line == True:
-            self.controller.tw_stock_controller_stock(Stock_item.STOCK_LOAD_HISTORY_DATA,self.var.get(),2021,8)#(self.var.get(),2021,8)
+            self.controller.tw_stock_controller_stock(Stock_item.STOCK_LOAD_HISTORY_DATA,self.var.get(),2021,8)
         if bar == True:
             self.controller.tw_stock_controller_stock(Stock_item.STOCK_LOAD_HISTORY_TRANSACTION,self.var.get())
         if (line == False and bar == False):
@@ -68,13 +68,21 @@ class Stock_View(tk.Tk):
     def tw_stock_view_tdcc_search(self,*args):
         bt = tk.Button(self.window,text="TDCC結算",width=11,command=lambda:\
                          self.controller.tw_stock_controller_tdcc(self.var.get(),self.check_var1.get(),self.check_var2.get())).place(x=args[0],y=args[1])#,command=lambda:\
-                       #TDCC_load_stock_data(self.var.get(),self.check_var1.get(),self.check_var2.get())).place(x=args[0],y=args[1])
+                       
     def tw_stock_view_realtime_button(self,*args):
         self.realtim_text = tk.StringVar()
         self.realtim_text.set("real time start")
         bt = tk.Button(self.window,text="real time",textvariable=self.realtim_text,width=15).place(x=args[0],y=args[1])#.pack(side='left')#command=self.tw_stock_tool_start
     def tw_stock_view_load_stock_table(self,*args):
-        bt = tk.Button(self.window,text="load file").place(x=args[0],y=args[1])#.pack(side='right')#command=self.tw_stock_tool_tables_window
+        bt = tk.Button(self.window,text="load file",command=self.tw_stock_view_stock_tables).place(x=args[0],y=args[1])#.pack(side='right')
+    def tw_stock_view_stock_tables(self):
+        file_path = self.tw_stock_view_open_file()
+        stock_sid = self.controller.tw_stock_load_data(file_path)
+        for x in range(int(self.first_num.get()),int(self.end_num.get())):
+            self.tw_stock_view_treeview(stock_sid[x])
+    def tw_stock_view_open_file(self):
+        file_path = filedialog.askopenfilename(title='開啟xlsx檔案', filetypes=[('xlsx', '*.xlsx')])
+        return file_path
     def tw_stock_view_check_button_date(self,*args):
         self.Day_check = tk.BooleanVar()
         self.Week_check = tk.BooleanVar()
