@@ -9,6 +9,13 @@ class Setting_item(Enum):
     CONFIG_SET = 4
     CONFIG_GET = 5
     CONFIG_DEL = 6
+class Stock_item(Enum):
+    STOCK_LOAD_NUMBER = 0
+    STOCK_LOAD_SHOW_DATA = 1
+    STOCK_LOAD_HISTORY_DATA = 2
+    STOCK_LOAD_HISTORY_TRANSACTION = 3
+    STOCK_LOAD_REALTIME = 4
+    STOCK_LOAD_BEST_FOURPOINT = 5
 class Flags(Enum):
     REALTIME_LOOP = 0
     INIT_FIG = 1

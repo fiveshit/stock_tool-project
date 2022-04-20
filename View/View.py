@@ -2,8 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from Controller.error_msg import *
 import tkinter as tk
-
-
+from Model.tw_stock import BEST_BUY,BEST_SELL
 #---------------------------------------#
 #Name : Stock_View
 #Description : Tkinter module create UI
@@ -57,7 +56,15 @@ class Stock_View(tk.Tk):
         self.C2 = tk.Checkbutton(self.window,text="transaction",variable=self.check_var2,onvalue=1,offvalue=0).place(x=args[2],y=args[3])
         self.C3 = tk.Checkbutton(self.window,text="realtime bar",variable=self.check_var3,onvalue=1,offvalue=0).place(x=args[4],y=args[5])
     def tw_stock_view_button(self,*args):
-        bt = tk.Button(self.window,text="show picture",width=15).place(x=args[0],y=args[1])#.pack(side='left')#command=self.tw_stock_tool_check_get
+        bt = tk.Button(self.window,text="show picture",width=15,command=self.tw_stock_view_check_get).place(x=args[0],y=args[1])#.pack(side='left')#command=self.tw_stock_tool_check_get
+    def tw_stock_view_check_get(self):
+        line,bar = self.check_var1.get(),self.check_var2.get()
+        if line == True:
+            self.controller.tw_stock_controller_stock(Stock_item.STOCK_LOAD_HISTORY_DATA,self.var.get(),2021,8)#(self.var.get(),2021,8)
+        if bar == True:
+            self.controller.tw_stock_controller_stock(Stock_item.STOCK_LOAD_HISTORY_TRANSACTION,self.var.get())
+        if (line == False and bar == False):
+            tk.messagebox.showinfo('FYI','please selection checkbutton')
     def tw_stock_view_tdcc_search(self,*args):
         bt = tk.Button(self.window,text="TDCC結算",width=11,command=lambda:\
                          self.controller.tw_stock_controller_tdcc(self.var.get(),self.check_var1.get(),self.check_var2.get())).place(x=args[0],y=args[1])#,command=lambda:\
@@ -76,7 +83,16 @@ class Stock_View(tk.Tk):
         tk.Checkbutton(self.window,text="Week",variable=self.Week_check,onvalue=1,offvalue=0).place(x=args[2],y=args[3])
         tk.Checkbutton(self.window,text="Month",variable=self.Month_check,onvalue=1,offvalue=0).place(x=args[4],y=args[5])
     def tw_stock_view_bestfourpoint(self,*args):
-        bt = tk.Button(self.window,text="best four buy").place(x=args[0],y=args[1])#.pack(side='left') #command=lambda:self.tw_stock_tool_treeview(self.var.get())
+        bt = tk.Button(self.window,text="best four buy",command=lambda:self.tw_stock_view_treeview(self.var.get())).place(x=args[0],y=args[1])#.pack(side='left') #command=lambda:self.tw_stock_tool_treeview(self.var.get())
+    def tw_stock_view_treeview(self,stock_sid):
+        #stock = self.tw_stock_analytics.load_stock_number(str(stock_sid))
+        stock = self.controller.tw_stock_controller_stock(Stock_item.STOCK_LOAD_NUMBER,str(stock_sid))
+        if stock == False:
+            return
+        merge_best_but_sell = self.controller.tw_stock_controller_stock(Stock_item.STOCK_LOAD_BEST_FOURPOINT,stock,self.var.get())
+        
+        #self.tw_stock_view_bestfourpoint_get(stock)
+        self.tree.insert('',0,text=stock.sid,values=merge_best_but_sell.values())
     def tw_stock_view_range_entry(self,*args):
         self.first_num = tk.StringVar()
         self.end_num = tk.StringVar()
@@ -106,12 +122,12 @@ class Stock_View(tk.Tk):
         hsb = ttk.Scrollbar(frame_treeview, orient="horizontal", command=self.tree.xview)
         self.tree["columns"] = self.index
         print(self.index[0])
-        '''
+        
         for x in range(0,4):
             self.tree.heading(self.index[x],text=list(BEST_BUY.keys())[x])
         for x in range(0,4):
             self.tree.heading(self.index[x+4],text=list(BEST_SELL.keys())[x])
-        '''
+        
         self.tree.column("#0", width=0,stretch=True)
         #### setting index width ####
         self.tree.column(self.index[0],width=100,stretch=False)
