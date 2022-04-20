@@ -1,8 +1,11 @@
+import time
 import tkinter as tk
 from tkinter import ttk
 from Controller.error_msg import *
 import tkinter as tk
 from tkinter import filedialog
+import matplotlib.pyplot as plt
+from Controller.error_msg import sys_debug_info
 from Model.tw_stock import BEST_BUY,BEST_SELL
 #---------------------------------------#
 #Name : Stock_View
@@ -71,9 +74,9 @@ class Stock_View(tk.Tk):
                          self.controller.tw_stock_controller_tdcc(self.var.get(),self.check_var1.get(),self.check_var2.get())).place(x=args[0],y=args[1])#,command=lambda:\
                        
     def tw_stock_view_realtime_button(self,*args):
-        self.realtim_text = tk.StringVar()
-        self.realtim_text.set("real time start")
-        bt = tk.Button(self.window,text="real time",textvariable=self.realtim_text,width=15).place(x=args[0],y=args[1])#.pack(side='left')#command=self.tw_stock_tool_start
+        realtim_text = tk.StringVar()
+        realtim_text.set("real time start")
+        bt = tk.Button(self.window,text="real time",textvariable=realtim_text,width=15,command=lambda:self.controller.tw_stock_controller_realtime_run(self.var.get(),realtim_text)).place(x=args[0],y=args[1])#.pack(side='left')#command=self.tw_stock_tool_start
     def tw_stock_view_load_stock_table(self,*args):
         bt = tk.Button(self.window,text="load file",command=self.tw_stock_view_stock_tables).place(x=args[0],y=args[1])#.pack(side='right')
     def tw_stock_view_stock_tables(self):
@@ -175,6 +178,37 @@ class Stock_View(tk.Tk):
         self.rank = tk.StringVar()
         tk.Entry(self.window,width=5,textvariable=self.rank).place(x=args[0],y=args[1])
         tk.Label(self.window,text='買賣超前:').place(x=args[2],y=args[3])
+    def tw_stock_view_all_info(self,result):
+        try:
+            self.Tab1.insert(tk.END,str(result.iloc[0])+'\n')
+            self.Tab1.insert(tk.END,str((result["委託賣價"][0])[0]+'\n'))
+        except Exception as e:
+            sys_debug_info(e)
+    def tw_stock_view_realtime(self,event,lock,flag_items):
+        event.wait()
+        while flag_items[Flags.REALTIME_START.value]:
+            while flag_items[Flags.REALTIME_LOOP.value]:
+                try:
+                    lock.acquire()
+                    result = self.controller.tw_stock_controller_stock(Stock_item.STOCK_LOAD_REALTIME,self.check_var3.get())
+                    
+                    lock.release()
+                    self.tw_stock_view_all_info(result)
+                    self.Tab.insert(tk.END,"委託買價"+str(result["委託買價"][1])+'\n')
+                    self.Tab.insert(tk.END,"委託買量"+str(result["委託買量"][1])+'\n')
+                    self.Tab.insert(tk.END,"委託賣價"+str(result["委託賣價"][1])+'\n')
+                    self.Tab.insert(tk.END,"委託賣量"+str(result["委託賣量"][1])+'\n')
+                    self.Tab.insert(tk.END,"成交量"+str(result["成交量"][1])+'\n')
+                    if flag_items[Flags.TEXT_STUCK.value] == False:
+                        self.Tab.see(tk.END)
+                        self.Tab1.see(tk.END)
+                    time.sleep(1)
+                    if flag_items[Flags.REALTIME_LOOP.value] == False:
+                        plt.show()
+                        plt.close("all")
+                except Exception as e:
+                    sys_debug_info(e)
+            time.sleep(0.1)
     #----------------------------------------------------------------------
     #                      View executes functions from Conrtoller to Model
     #----------------------------------------------------------------------

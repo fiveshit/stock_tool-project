@@ -8,6 +8,10 @@ from Model.tw_stock_load import load_stock_tables
 import tw_stock_tdcc
 import twstock
 
+from threading import Thread
+from threading import Event
+import threading
+
 class Stock_Controller:
     def __init__(self):
         self.model = Stock_Mode()
@@ -16,8 +20,33 @@ class Stock_Controller:
         self.stock = tw_stock_analytics()
         self.view.tw_stock_view_set_to_controller(self)
         self.view.tw_stock_view_init_ui()
+
+        # flags
+        self.flag_items = list(Flags)
+        self.flag_items[Flags.REALTIME_LOOP.value] = False
+        self.flag_items[Flags.INIT_FIG.value] = False
+        self.flag_items[Flags.TEXT_STUCK.value] = False
+        self.flag_items[Flags.REALTIME_START.value] = True
+
+        # realtime thread
+        self.event = Event()
+        self.lock = threading.Lock()
+        realtime = Thread(target = self.view.tw_stock_view_realtime,args=(self.event,self.lock,self.flag_items,))
+        realtime.setDaemon(True)
+        realtime.start()
     def run(self):
         self.view.window.mainloop()
+    def tw_stock_controller_realtime_run(self,realtime_id,realtime_text):
+        self.realtime_id = realtime_id
+        if self.flag_items[Flags.REALTIME_LOOP.value] == True:
+            self.flag_items[Flags.REALTIME_LOOP.value] = False
+            realtime_text.set("real time start")
+        elif self.flag_items[Flags.REALTIME_LOOP.value] == False:
+            self.flag_items[Flags.REALTIME_LOOP.value] = True   
+            self.flag_items[Flags.INIT_FIG.value] = False
+            realtime_text.set("running")
+        if not self.event.is_set():
+            self.event.set()
 #----- Setting function enum-------#
 #    LOAD_SECTION = 0
 #    LOAD_ALL_ITEMS = 1
@@ -68,6 +97,7 @@ class Stock_Controller:
             self.stock.load_stock_history_transaction(args[0])
             print("do load history transaction")
         elif item == Stock_item.STOCK_LOAD_REALTIME:
+            return self.stock.load_stock_realtime(self.realtime_id,args[0])
             print("do load realtime")
         elif item == Stock_item.STOCK_LOAD_BEST_FOURPOINT:
             stock_id = args[0]
