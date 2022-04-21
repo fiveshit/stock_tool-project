@@ -1,5 +1,11 @@
 import pandas as pd
-
+#---------------------------------------#
+#Name : Stock_Mode
+#Description : other function interface
+#Input : -
+#Output : -
+#Return : -
+#---------------------------------------#
 class Stock_Mode:
     def __init__(self):
         print("enter Model")

@@ -1,7 +1,13 @@
 import sys
 from traceback import extract_tb
 from enum import Enum
-
+#---------------------------------------#
+#Name : 
+#Description : define all enum and debug msg
+#Input : -
+#Output : -
+#Return : -
+#---------------------------------------#v
 
 class TDCC_item(Enum):
     TDCC_LOAD_DATE = 0

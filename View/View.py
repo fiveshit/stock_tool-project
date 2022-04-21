@@ -5,6 +5,7 @@ from Controller.error_msg import *
 import tkinter as tk
 from tkinter import filedialog
 import matplotlib.pyplot as plt
+from tkinter import messagebox
 from Controller.error_msg import sys_debug_info
 from datetime import datetime
 
@@ -20,11 +21,13 @@ class Stock_View(tk.Tk):
     def __init__(self):
         super().__init__()
         self.window = self
+        # variable 
+        self.var = tk.StringVar()
     def tw_stock_view_init_ui(self):
         self.window.title('stock app')
         self.window.geometry('820x650')
         # sub View
-        self.tw_stock_options_view = Stock_Options_View(self.window)
+        self.tw_stock_options_view = Stock_Options_View(self.window,self.controller,self.var)
         #----------------------------- 
         #           create all View UI
         #-----------------------------
@@ -49,7 +52,6 @@ class Stock_View(tk.Tk):
     def tw_stock_view_label(self,*args):
         tk.Label(self.window,text="股票代號:").place(x=args[0],y=args[1])
     def tw_stock_view_entry(self,*args):
-        self.var = tk.StringVar()
         tk.Entry(self.window,textvariable=self.var).place(x=args[0],y=args[1])#.pack(side='top',ipadx=10)
     def tw_stock_view_button_stock_list(self,*args):
         tk.Button(self.window,text=args[0],command=self.tw_stock_options_view.tw_stock_options_view_setting_window).place(x=args[1],y=args[2],height=20)
@@ -291,6 +293,9 @@ class Stock_View(tk.Tk):
                 except Exception as e:
                     sys_debug_info(e)
             time.sleep(0.1)
+    def tw_stock_view_on_close(self):
+        return messagebox.askokcancel("Quit", "Do you want to quit?")
+            
     #----------------------------------------------------------------------
     #                      View executes functions from Conrtoller to Model
     #----------------------------------------------------------------------
@@ -305,8 +310,10 @@ class Stock_View(tk.Tk):
 #description : When user press options UII,view will send event to controller.
 #---------------------------------------#
 class Stock_Options_View(Stock_View):
-    def __init__(self,window):
+    def __init__(self,window,controller,var):
         self.window = window
+        self.controller = controller
+        self.var = var
     def tw_stock_options_view_setting_window(self):
         self.window.attributes("-disabled",1)
         stock_list_window = tk.Toplevel(self.window)
@@ -324,9 +331,9 @@ class Stock_Options_View(Stock_View):
         stock_list_window.focus()
         self.stock_id_list_box.place(x=10,y=40)
         self.setting_entry.place(x=10,y=10,height=25)
-        self._load_stock_id_setting()
+        self.tw_stcok_options_view_load_stock_id_setting()
         stock_list_window.protocol("WM_DELETE_WINDOW",lambda:self.tw_stock_options_view_on_close_stock_list(stock_list_window))
-    def _load_stock_id_setting(self):
+    def tw_stcok_options_view_load_stock_id_setting(self):
     	stock_id = self.controller.tw_stock_controller_setting(Setting_item.LOAD_ALL_ITEMS)#self.tw_stock_setting.Setting_load_all_items(self.tw_stock_setting.section_name)
     	for id in range(len(stock_id)):
     		self.stock_id_list_box.insert(tk.END,stock_id[id][0])

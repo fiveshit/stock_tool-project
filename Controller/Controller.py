@@ -12,7 +12,13 @@ import twstock
 from threading import Thread
 from threading import Event
 import threading
-
+#---------------------------------------#
+#Name : Stock_Controller
+#Description : View want to call Model functions from controller interface
+#Input : -
+#Output : -
+#Return : -
+#---------------------------------------#
 class Stock_Controller:
     def __init__(self):
         self.model = Stock_Mode()
@@ -36,7 +42,16 @@ class Stock_Controller:
         realtime.setDaemon(True)
         realtime.start()
     def run(self):
+        self.view.window.protocol("WM_DELETE_WINDOW",self.tw_stock_controller_close)
         self.view.window.mainloop()
+    def tw_stock_controller_close(self):
+        if self.view.tw_stock_view_on_close():
+            if self.flag_items[Flags.REALTIME_START.value] == True:
+                self.flag_items[Flags.REALTIME_LOOP.value] = False
+            if self.flag_items[Flags.REALTIME_START.value] == True:
+                self.flag_items[Flags.REALTIME_LOOP.value] = False
+            self.event.clear()
+            self.view.window.destroy()
     def tw_stock_controller_realtime_run(self,realtime_id,realtime_text):
         self.realtime_id = realtime_id
         if self.flag_items[Flags.REALTIME_LOOP.value] == True:
@@ -66,8 +81,9 @@ class Stock_Controller:
     def tw_stock_controller_setting(self,item,*args):
         if item == Setting_item.LOAD_SECTION:
             print("do load section")
-        elif item == LOAD_ALL_ITEMS:
-            return self.model.Setting_load_all_items(self.setting.section_name)  
+        elif item == Setting_item.LOAD_ALL_ITEMS:
+            print("do LOAD_ALL_ITEMS")
+            return self.setting.Setting_load_all_items(self.setting.section_name)  
         elif item == Setting_item.CONFIG_READ:
             print("do config read")
         elif item == Setting_item.CONFIG_WRITE:
@@ -81,7 +97,7 @@ class Stock_Controller:
             print("do config delete")
     #---------load functions -----------#
     def tw_stock_load_data(self,path):
-        load_stock_tables(path)
+        return load_stock_tables(path)
         # -------TDCC functions-----------#
         #   TDCC_LOAD_DATE = 0
         #   TDCC_LOAD_DATA = 1

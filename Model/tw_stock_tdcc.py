@@ -21,6 +21,13 @@ TPEx = ["外資及陸資(不含外資自營商)買賣超股數","外資自營商
 
 url = r"https://www.tdcc.com.tw/portal/zh/smWeb/qryStock"
 headers = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36'}
+#---------------------------------------#
+#Name : TDCC functions
+#Description : stock date : return stock date
+#              stock data : return stock tdcc data
+#              TPEx info : return TPEx info
+#              TWSE info : return TWSE info
+#---------------------------------------#
 def TDCC_load_stock_date():
     res = requests.get(url,headers=headers)
     soup = bs(res.text,'html.parser')
