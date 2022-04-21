@@ -6,7 +6,7 @@ from Model.tw_stock import tw_stock_analytics
 from Model.tw_stock_load import load_stock_tables
 from Model.tw_stock import BEST_BUY,BEST_SELL
 
-import tw_stock_tdcc
+from Model.tw_stock_tdcc import *
 import twstock
 
 from threading import Thread
@@ -114,7 +114,7 @@ class Stock_Controller:
         elif item == TDCC_item.TWSE_LOAD_INFO:
             return tw_stock_tdcc.TWSE_load_stock_info(args[0])
     def tw_stock_controller_param_TPEx(self):
-        return tw_stock_tdcc.TPEx
+        return TPEx
         #----- stock  function enum-------#
         #   STOCK_LOAD_NUMBER = 0
         #   STOCK_LOAD_SHOW_DATA = 1

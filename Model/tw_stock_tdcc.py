@@ -9,10 +9,10 @@ from selenium import webdriver
 from selenium.webdriver.support.select import Select
 import time
 import os
-import analysis
+import Model.analysis
 import pandas as pd
 import numpy as np
-from error_msg import sys_debug_info
+from Controller.error_msg import sys_debug_info
 
 TPEx = ["外資及陸資(不含外資自營商)買賣超股數","外資自營商買賣超股數",\
         "外資及陸資買賣超股數","投信買賣超股數","自營商(自行買賣)買賣超股數",\

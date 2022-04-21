@@ -4,7 +4,7 @@ from twstock import BestFourPoint
 import tkinter.ttk as ttk
 import tkinter as tk
 import time
-import analysis
+from Model.analysis import analysis
 import pandas as pd
 import threading
 
@@ -22,7 +22,7 @@ class tw_stock_analytics():
     def __init__(self,flag_items=None):
         #BEST_BUT = dict.fromkeys(['是否量大收紅','是否量縮價不跌','三日均價由下往上','三日均價大於六日均價'],0)
         #BEST_SELL = dict.fromkeys(['量大收黑','量縮價跌','三日均價由上往下','三日均價小於六日均價'],0)
-        self.tw_stock_analysis = analysis.analysis()
+        self.tw_stock_analysis = analysis()
         self.flag_items = flag_items
         self.sell_value = 0
         self.buy_value = 0
