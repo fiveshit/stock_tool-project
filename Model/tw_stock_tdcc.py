@@ -9,7 +9,7 @@ from selenium import webdriver
 from selenium.webdriver.support.select import Select
 import time
 import os
-import Model.analysis
+from Model.analysis import analysis 
 import pandas as pd
 import numpy as np
 from Controller.error_msg import sys_debug_info
@@ -37,7 +37,7 @@ def TDCC_load_stock_date():
     return stock_date
 def TDCC_load_stock_data(stock_num,*graph):
     date = TDCC_load_stock_date()
-    analy = analysis.analysis()
+    analy = analysis()
     if platform.system().lower() == 'linux':
         chrome_driver_path = r"/home/joe/chromedriver_linux64/chromedriver"
     elif platform.system().lower() == 'windows':

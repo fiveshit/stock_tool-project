@@ -108,11 +108,11 @@ class Stock_Controller:
         if item == TDCC_item.TDCC_LOAD_DATE:
             print("do TDCCC load date")
         elif item == TDCC_item.TDCC_LOAD_DATA:
-            tw_stock_tdcc.TDCC_load_stock_data(args[0],args[1],args[2])
+            TDCC_load_stock_data(args[0],args[1],args[2])
         elif item == TDCC_item.TPEX_LOAD_INFO:
-            return tw_stock_tdcc.TPEx_load_stock_info(args[0],period)
+            return TPEx_load_stock_info(args[0],period)
         elif item == TDCC_item.TWSE_LOAD_INFO:
-            return tw_stock_tdcc.TWSE_load_stock_info(args[0])
+            return TWSE_load_stock_info(args[0])
     def tw_stock_controller_param_TPEx(self):
         return TPEx
         #----- stock  function enum-------#
