@@ -3,7 +3,7 @@
 3.8.10
 # pyinstaller 打包成 exe 執行檔如下指令
 # 切換到檔案目錄下 (建議目錄下含有"新版工模指令對應表.xlsx"此檔案，會一併包入)
-pyinstaller -w tw_stock_tool.py -p tw_stock_load.py -p tw_stock.py -p tw_stock_tdcc.py -p analysis.py --add-data ..\Lib\site-packages\twstock\codes;twstock\codes
+pyinstaller -w main.py -p Model/Model.py -p Model/tw_stock.py -p Model/tw_stock_load.py -p Model/tw_stock_setting.py -p Model/tw_stock_tdcc.py -p View/View.py -p Controller/Controller.py -p Controller/error_msg.py --add-data ..\..\Lib\site-packages\twstock\codes;twstock\codes
 
 # 引用Lib
 # 可用 pip3 下載所需要用到的 Lib
@@ -26,4 +26,4 @@ pip3 install lxml
 pip3 install twstock
 # 編譯
 1. 使用 IDE 編譯
-2. python tw_stock_tool.py
+2. python main.py
