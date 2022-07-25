@@ -27,3 +27,5 @@ pip3 install twstock
 # 編譯
 1. 使用 IDE 編譯
 2. python main.py
+
+![Image test](https://github.com/fiveshit/stock_tool-project/blob/main/tool_ui.PNG)
